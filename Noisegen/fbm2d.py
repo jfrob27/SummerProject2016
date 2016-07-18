@@ -1,6 +1,4 @@
 import numpy as np
-import math
-import matplotlib.pyplot as plt
 
 def fbm2d(exp ,nx ,ny):
 
@@ -22,17 +20,6 @@ def fbm2d(exp ,nx ,ny):
         odd_y = 0.
  
 #phase  
-   # phase=np.random.uniform(-np.pi,np.pi,size=(nx,ny))
-#Setting Phase Using Array Projection
-    #if odd_y == 1:
-     #   phase[1:,1:][nx_half:,:ny][::-1,::-1] = -phase[1:,1:][:nx_half,:ny]
-        ##phase[(nx_half+1.):,:ny][::-1,::-1] = -phase[:nx_half,:ny]
-    #else:
-     #   phase[1:,1:][(nx_half):,:ny][::-1,::-1] = -phase[1:,1:][:nx_half-1,:ny]
-      #  phase[1:,1:][(ny_half-1),:(nx_half-1)][::-1]= -phase[1:,1:][(ny_half-1),nx_half:]
-#phase[nx_half:,:ny][::-1,::-1] = -phase[:nx_half,:ny]
-
-#old method like in IDL
     phase = np.zeros((nx,ny))
     phase[:]=-599
     for j in range(int(ny)):
@@ -44,10 +31,6 @@ def fbm2d(exp ,nx ,ny):
                 phase[i,j]=tempo
                 if (i2 < nx and j2 < ny): 
                     phase[i2,j2]= -1.*tempo
-#    phase= np.roll(phase, int(nx_half+odd_x), axis=1)
-#    phase= np.roll(phase, int(ny_half+odd_y-1), axis=0)
-
-
     phase = np.fft.ifftshift(phase)
 
 #k matrix
@@ -64,18 +47,12 @@ def fbm2d(exp ,nx ,ny):
 
     amplitude = kmat**(exp/2.)
     amplitude[nx_half,ny_half]=0.
-
-
-    #amplitude = np.roll(amplitude, int(nx_half+odd_x), axis=1)
-    #amplitude = np.roll(amplitude, int(ny_half+odd_y-1), axis=0)
     amplitude = np.fft.ifftshift(amplitude)
     
     imRE = amplitude * np.cos(phase)
     imIM = amplitude * np.sin(phase)
     imfft = 1.j*imIM+imRE
     image = np.fft.ifft2(imfft)
-
     image=(image.real)
     
-    #image = image / np.std(image)
     return image
