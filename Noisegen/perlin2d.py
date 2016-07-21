@@ -2,6 +2,14 @@ import scipy.interpolate
 import numpy as np
 
 def perlin2d(n,p):
+    
+    '''
+    image size n x n with 'perturbance' "p"
+    returns image, matrix
+    where image is the n x n image and matrix is
+    an image cube of each scale of the image before summation
+    '''
+    
 
     total = 0
     fmax = (2**(n))
