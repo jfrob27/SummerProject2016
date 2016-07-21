@@ -1,8 +1,12 @@
 import numpy as np
 
 def fbm2d(exp ,nx ,ny):
+    '''
+     Generates an image using a power spectrum with slope 'exp' of size nx, ny
+     Returns an image as np array
+    '''
 
-#definitions
+#--------------definitions--------------#
     exp = float(exp)
     nx = float(nx)
     ny = float(ny)
@@ -19,7 +23,11 @@ def fbm2d(exp ,nx ,ny):
         ny_half = ny/2.
         odd_y = 0.
  
-#phase  
+
+
+#---------------phase------------------#  
+
+## might be possible to set up using array projection##  
     phase = np.zeros((nx,ny))
     phase[:]=-599
     for j in range(int(ny)):
@@ -33,7 +41,10 @@ def fbm2d(exp ,nx ,ny):
                     phase[i2,j2]= -1.*tempo
     phase = np.fft.ifftshift(phase)
 
-#k matrix
+
+
+
+#-----------------k matrix-----------------------#
     xmap = np.zeros((nx,ny))
     ymap = np.zeros((nx,ny))
     for i in range(int(nx)):
@@ -43,8 +54,9 @@ def fbm2d(exp ,nx ,ny):
     kmat= np.sqrt(xmap**2. + ymap ** 2.)
     kmat[nx_half,ny_half]=1.
 
-#amplititude
 
+
+#------------------amplititude-------------------#
     amplitude = kmat**(exp/2.)
     amplitude[nx_half,ny_half]=0.
     amplitude = np.fft.ifftshift(amplitude)
@@ -53,6 +65,7 @@ def fbm2d(exp ,nx ,ny):
     imIM = amplitude * np.sin(phase)
     imfft = 1.j*imIM+imRE
     image = np.fft.ifft2(imfft)
+    
     image=(image.real)
     
     return image
