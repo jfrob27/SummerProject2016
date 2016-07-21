@@ -38,35 +38,22 @@ def fbm2d(exp ,nx ,ny):
  
 #---------------phase------------------#  
 
-
-    #phase=np.random.uniform(-np.pi,np.pi,size=(nx,ny))
-    #---Setting Phase Using Array Projection---#
-    #if odd_y == 1:
-    #   phase[1:,1:][nx_half:,:ny][::-1,::-1] = -phase[1:,1:][:nx_half,:ny]
-    #   phase[(nx_half+1.):,:ny][::-1,::-1] = -phase[:nx_half,:ny]
-    #else:
-    #   phase[1:,1:][(nx_half):,:ny][::-1,::-1] = -phase[1:,1:][:nx_half-1,:ny]
-    #  phase[1:,1:][(ny_half-1),:(nx_half-1)][::-1]= -phase[1:,1:][(ny_half-1),
-    #    nx_half:]
-    #phase[nx_half:,:ny][::-1,::-1] = -phase[:nx_half,:ny]
-
-    #method like in IDL
+## might be possible to set up using array projection##
     phase = np.zeros((nx,ny))
-    phase[:]=-599
+    phase[:] = -599
     for j in range(int(ny)):
         j2 = 2*ny_half - j
         for i in range(int(nx)):
-            i2=2*nx_half-i
+            i2 = 2*nx_half-i
             if phase [i,j] == -599:
                 tempo = np.random.uniform(-np.pi,np.pi)
-                phase[i,j]=tempo
+                phase[i,j] = tempo
                 if (i2 < nx and j2 < ny): 
-                    phase[i2,j2]= -1.*tempo
-    #phase= np.roll(phase, int(nx_half+odd_x), axis=1)
-    #phase= np.roll(phase, int(ny_half+odd_y-1), axis=0)
-
+                    phase[i2,j2] = -1.*tempo
 
     phase = np.fft.ifftshift(phase)
+    
+    
 
 #-----------------k matrix-----------------------#
     xmap = np.zeros((nx,ny))
@@ -78,14 +65,13 @@ def fbm2d(exp ,nx ,ny):
     kmat= np.sqrt(xmap**2. + ymap ** 2.)
     kmat[nx_half,ny_half]=1.
 
+
+
 #------------------amplititude-------------------#
 
     amplitude = kmat**(exp/2.)
     amplitude[nx_half,ny_half]=0.
 
-
-    #amplitude = np.roll(amplitude, int(nx_half+odd_x), axis=1)
-    #amplitude = np.roll(amplitude, int(ny_half+odd_y-1), axis=0)
     amplitude = np.fft.ifftshift(amplitude)
     
     imRE = amplitude * np.cos(phase)
@@ -107,6 +93,9 @@ def fbm2d(exp ,nx ,ny):
 def perlin2d(n,p):
     '''
     image size n x n with 'perturbance' "p"
+    returns image, matrix
+    where image is the n x n image and matrix is
+    an image cube of each scale of the image before summation
     '''
     total = 0
     fmax=(2**(n))
@@ -116,15 +105,10 @@ def perlin2d(n,p):
         f=(2**(i))
         a=(p**(i))
         randz=np.random.uniform(-1,1,size=(f,f))
-        #randy=np.random.uniform(-1,1,size=(f))
+    
         x=np.linspace(0,fmax-1,f)
         y=np.linspace(0,fmax-1,f)
 
-        #x=np.linspace(0,fmax,f+1)
-        #y=np.linspace(0,fmax,f+1)
-        #x,y= np.meshgrid(x,y)
-        #zmat=np.arange(0,fmax,fmax/f)
-        #coord=np.arange(fmax)
         g=scipy.interpolate.RectBivariateSpline(y,x,randz)
         intmat=g(coord,coord)*a
         total=(intmat)+total
@@ -136,32 +120,32 @@ def perlin2d(n,p):
 
 
 
-def powerlawmod(wt, wtC, tab_k,  wherestart, slope, S1ac, S1a, wtN):   
+def powerlawmod(wt, wtC, tab_k,  wherestart, slope):   
    
     '''
-   ##function used to modify power law of non-gaussian part of image. wt is
-   ## original image wavelet transform. wtC is coherent part of wavelet 
-   ##transform. where start is the point that will be the interesection of 
-   ##the two powerlaws. Modificiation is done by multiplication 
-   ## by a constant
-   Returns Modified wavelets of coherent part, wtCmod.
+    function used to modify power law of non-gaussian part of image. wt is 
+    original image wavelet transform. wtC is coherent part of wavelet 
+    transform. where start is the point that will be the interesection of 
+    the two powerlaws. Modificiation is done by multiplication 
+    by a constant
+    Returns Modified wavelets of coherent part, wtCmod.
    '''
 
 
 
 #-----------Definitions and Everything as Magnitudes--------#    
-    Wc=np.sum(wtC[:], axis=3)
-    Wc=abs(Wc)
-    wtmod=np.zeros((wt.shape[0],wt.shape[1],wt.shape[2]))
-    wtmod=abs(Wc.copy())
-    #wNmod=np.zeros((wt.shape[0],wt.shape[1],wt.shape[2]))
-    x=np.log(tab_k)
-    awt=wtC.copy()
-    awt=abs(awt)
-    wt=abs(wt)
-    power=np.log(np.mean((abs(wt)**2.), axis=(0,1)))
-    powernew=np.log(np.mean((abs(Wc)**2.), axis=(0,1)))
-    end=wtmod.shape[2]
+    Wc = np.sum(wtC[:], axis=3)
+    Wc = abs(Wc)
+    wtmod = np.zeros((wt.shape[0],wt.shape[1],wt.shape[2]))
+    wtmod = abs(Wc.copy())
+
+    x = np.log(tab_k)
+    awt = wtC.copy()
+    awt = abs(awt)
+    wt = abs(wt)
+    power = np.log(np.mean((abs(wt)**2.), axis=(0,1)))
+    powernew = np.log(np.mean((abs(Wc)**2.), axis=(0,1)))
+    end = wtmod.shape[2]
 
 
 #Power of wavelets corresponding to slope input calculated#
