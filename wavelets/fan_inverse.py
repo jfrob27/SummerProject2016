@@ -1,6 +1,12 @@
 import numpy as np
 
 def fan_inverse(wt, tab_k):
+#intend to add option for scale so image can be reconstructed at certain scales
+    '''
+    Performs the inverse fan wavelet transform on a set of wavelets wt
+    scale tab_k. Returns an image of size wt.shape[0] , wt.shape[1]
+    '''
+    
     ko=5.336
     delta = (2.*np.sqrt(-2.*np.log(.75)))/ko
     na=float(wt.shape[0])
@@ -13,7 +19,7 @@ def fan_inverse(wt, tab_k):
     M=tab_k.shape[0]
     interval=[tab_k[0],tab_k[M-1]]  #Default if no interval input#
 
-    ########################################
+#---------------------------------------------------------------
 
     x=np.arange(nb)
     y=np.arange(na)
@@ -32,7 +38,8 @@ def fan_inverse(wt, tab_k):
         y= (1.*y - (na-1)/2.)/ na
         shifty= (na-1.)/2+1
 
-########################################
+#----------------------------------------------------------------
+
     Cphi=0.114517
 
     a=ko/(tab_k)
@@ -42,21 +49,21 @@ def fan_inverse(wt, tab_k):
     N=int((2*np.pi)/delta)
 
     imagetot=np.complex_(np.zeros((na,nb)))
-    #uv_sum=np.zeros((na,nb))
     phi=np.zeros((na,nb))
     arrange=np.arange(tab_k.shape[0])
 
-    o=interval[0]
-    l=interval[1]
-    int1= np.where((tab_k >= o) & (tab_k <= l))
-    int1=arrange[int1]
-    count=int1.shape[0]
-
-    for h in range(int1[0], int1[count-1]):
+    #o=interval[0]
+    #l=interval[1]
+    #int1= np.where((tab_k >= o) & (tab_k <= l))
+    #int1=arrange[int1]
+    #count=int1.shape[0]
+    #for h in range(int1[0], int1[count-1]): 
+    #^^ These lines were originally to allow reconstruction at specific scales ^^#
+    
+    for h in range(tab_k.shape[0]):
         for i in range(N):
             uv=0
             t=float(delta*i)
-            #for j in range(int1[0], int1[count-1]+1):
             uv=np.exp(-0.5*( (a[h]*x - ko*np.cos(t))**2. + (a[h]*y - ko*np.sin(t))**2.))
             uv = uv / a[h]**2.
         
@@ -64,12 +71,12 @@ def fan_inverse(wt, tab_k):
             imageFT=np.roll((np.fft.fft2(wt[:,:,h])),int(shiftx), axis=1)
             imageFT=np.roll(imageFT, int(shifty), axis=0)
             imageFT=imageFT*uv
-            #imageFT=np.fft.fftshift(imageFT)
+        
             imageFT=np.roll(imageFT ,int(shiftx), axis=1)
             imageFT=np.roll(imageFT, int(shifty), axis=0)
 
             ampli=abs(imageFT)
-           # arrange=np.arange((imageFT.shape[0]*imageFT.shape[1])).reshape(imageFT.shape[0],imageFT.shape[1])
+          
             phi=np.arctan2(imageFT.imag,imageFT.real)
             
 
