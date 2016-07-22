@@ -3,8 +3,12 @@ import wavelet_transforms as wts
 from nonguassianextraction import coherent_extraction
 import fbm2d as fbm
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 
+#Some original function definitions are here.
+#The Powerlawmod functions are the same as in their original code in the repository.
+#Running eGRF_save() creates and saves eGRF image to be used
+#all_images() generates images of the modification increment-wise to show the change
+#an example gif that was created is also included in the folder
 
 def powerlawmod(wt, wtC, tab_k,  wherestart, slope,):   
     
