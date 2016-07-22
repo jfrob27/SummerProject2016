@@ -1,6 +1,9 @@
-import numpy as np
+def halo_inverse(wt, tab_k, multiscales=False):
 
-def halo_inverse(wt, tab_k):
+    '''
+    multiscales allows reconstruction when wavelets have features that
+    are not necisacrliy at their original scales
+    '''
 
 #----------------definitions----------------#
 
@@ -37,7 +40,23 @@ def halo_inverse(wt, tab_k):
         
     for h in range(tab_k.shape[0]):
         uv = 0
-        for i in range(tab_k.shape[0]):
+        if scale=True:
+            for i in range(tab_k.shape[0]):
+                uv = np.exp ( -0.5 * ( abs ( a[i] * np.sqrt ( x**2. + y**2. ) )- ko)**2.)
+                uv = uv / a[i]
+
+                imageFT = np.roll((np.fft.fft2(wt[:,:,h])),int(shiftx), axis=1)
+                imageFT = np.roll(imageFT, int(shifty), axis=0)
+                imageFT = imageFT*uv
+        
+                imageFT = np.roll(imageFT ,int(shiftx), axis=1)
+                imageFT = np.roll(imageFT, int(shifty), axis=0)
+                image = np.fft.ifft2(imageFT)            
+
+                imagetot = imagetot+image 
+
+
+        else:
             uv = np.exp ( -0.5 * ( abs ( a[h] * np.sqrt ( x**2. + y**2. ) )- ko)**2.)
             uv = uv / a[h]
 
@@ -45,17 +64,10 @@ def halo_inverse(wt, tab_k):
             imageFT = np.roll((np.fft.fft2(wt[:,:,h])),int(shiftx), axis=1)
             imageFT = np.roll(imageFT, int(shifty), axis=0)
             imageFT = imageFT*uv
-        
+            
             imageFT = np.roll(imageFT ,int(shiftx), axis=1)
             imageFT = np.roll(imageFT, int(shifty), axis=0)
-
-
-            ampli = abs (imageFT)
-            phi = np.arctan2(imageFT.imag, imageFT.real)
-            imageFT= ampli*np.cos(phi)+1.j*ampli*np.sin(phi)
-            #reassigning the phase here seems redundant.
-            #Code works the same with and without the above 3 lines.
-
+            
             image = np.fft.ifft2(imageFT)
             
             imagetot = imagetot+image 
