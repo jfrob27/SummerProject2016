@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 #all_images() generates images of the modification increment-wise to show the change
 #an example gif that was created is also included in the folder
 
+#qfunction was used to determine the best threshold for coherent extraction
+
 def powerlawmod(wt, wtC, tab_k,  wherestart, slope,):   
     
     
