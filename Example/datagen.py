@@ -103,7 +103,7 @@ def q_test():
     for i in range(6):
         step=i*.4
         print step
-        wt,Wn,Wc, tab_k, S1ac, S1a= coherent_extraction(image, q=i+2.)
+        wt,Wn,Wc, tab_k, S1ac, S1a= coherent_extraction(image, q=step+2.)
         plt.figure(i)
         plt.hist(Wn.real[:,:,17].flatten(), bins=25)
         print Wn.shape
