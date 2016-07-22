@@ -4,9 +4,10 @@ def powerlawmod(wt, wtC, tab_k,  wherestart, slope,):
 
 
     '''
-    function used to modify power law of non-gaussian part of image. wt is 
-    original image wavelet transform. wtC is coherent part of wavelet 
-    transform. where start is the point that will be the interesection of 
+    function used to modify power law of non-gaussian part of image.
+    The power is raised so that the lines are on the same order. The slope is then modified
+    wt is original image wavelet transform. wtC is coherent part of wavelet 
+    transform. wherestart is the point that will be the interesection of 
     the two powerlaws. Modificiation is done by multiplication 
     by a constant
     Returns Modified wavelets of coherent part, wtCmod.
@@ -52,9 +53,9 @@ def powerlawmod(wt, wtC, tab_k,  wherestart, slope,):
 
 
 
-def interceptmod(wt, wtC, tab_k,  incr,):   
+def interceptmod(wtC, tab_k,  incr,):   
     '''
-    
+    wavelets power incresed by incr
     '''
     
     Wc=abs(wtC)
