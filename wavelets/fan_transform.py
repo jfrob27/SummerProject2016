@@ -1,16 +1,22 @@
-import numpy as np
 def fan_transform(image, scale='scale'):
+    '''
+    Performs fan transform on 'image' input. If scale is not specified returns
+    largest number of scales. Right now scale option is broken. 
+    Returns wt, tab_k and S1a where:
+    wt   is an image cube of wavelets of size image with depth number of scales.
+    tab_k is scales
+    S1a is powerlaw
+    '''
 
 
-
-####################Definitions#############################
+#--------------------Definitions----------------------#
     ko= 5.336
     delta = (2.*np.sqrt(-2.*np.log(.75)))/ko
     na=float(image.shape[0])
     nb=float(image.shape[1])
 
 
-#--------------Spectral Logarithm--------------------
+#--------------Spectral Logarithm--------------------#
     M=int(np.log(nb)/delta)
     a2= np.zeros(M)
     a2[0]=np.log(nb)
@@ -74,69 +80,11 @@ def fan_transform(image, scale='scale'):
             W1FT=imageFT*uv
             W1F2=np.roll(W1FT,int(shiftx), axis =1)
             W1F2=np.roll(W1F2,int(shifty),axis=0)
-            #W1F2=np.fft.ifftshift(W1FT)
+
             W1=np.fft.ifft2(W1F2)
             wt[:,:,j]=wt[:,:,j]+ W1
             S1[:,:,j]= S1[:,:,j] + abs(W1)**2.
 
         S1a[j]=np.mean(S1[:,:,j])*delta/ float(N)
-    #row_sums = wt.sum(axis=1)
-   # wt = wt / row_sums[:, np.newaxis]
+
     return wt, tab_k, S1a
-
-
-#def phasetest(wt, tab_k):
-#    #wt=wt[:,:,:16]
- #   n=wt.shape[0]
-#    wta=np.zeros((n,n,tab_k.shape[0]))
-#    phasemat=np.zeros((n,n,tab_k.shape[0]))
-#    phase=np.arctan(wt.imag/wt.real)
- #   wt=wt.real
- ##   wtplus=(-1/(np.exp(wt/.5)+1)+1)*wt
-#  #  wnorm=np.linalg.norm(wtplus)
- #   wtplus=wtplus/wnorm
-#
-
- #   wtminus=((1/(np.exp(wt/.5)+1))*wt)
-   # wnorm=np.linalg.norm(wtminus)
-  #  wtminus=wtminus/wnorm
-    #combine=np.zeros((n,n,tab_k.shape[0]))
-
-
-    #for i in range(6, tab_k.shape[0]):
-     #   phasei=5*np.exp(-abs(phase[:,:,i]))
-      #  wti =wtplus[:,:,i]
-        #wnorm=np.linalg.norm(wti[:,:])
-        #wti=wti[:,:]/wnorm
-#        pnorm=np.linalg.norm(phasei[:,:])
- #       phasei=phasei/pnorm
-  #      wta[:,:,i]=(wti)
-   #     phasemat[:,:,i]=phasei
-#
- #       combine[:,:,i]=wti*phasei
-#
- #       wnorm=np.linalg.norm(wtminus[:,:,i])
-  #      wtminus[:,:,i]=wtminus[:,:,i]/wnorm
-#
- #       cnorm=np.linalg.norm(combine[:,:,i])
-  #      combine[:,:,i]=combine[:,:,i]/cnorm
-   #     combine[:,:,i]=(combine[:,:,i]+wtminus[:,:,i])
-
-    #wtminus=((1/(np.exp(wt/.5)+1))*wt)
-    #wnorm=np.linalg.norm(wtminus)
-   # wtminus=wtminus/wnorm
-   # cnorm=np.linalg.norm(combine)
-    #combine=combine/cnorm
-   # combine=combine+wtminus[:,:,10:]
-   # wtnorm=np.linalg.norm(wt)
-    #wt=wt/wtnorm
-#    for i in range(wt.shape[2]):
- #       wti=wt[:,:,i]
-  #      norm=np.linalg.norm(wti)
-   #     wti=wti/norm
-    #    wt[:,:,i]=wti
-#    for i in range(combine.shape[2]):
- #       combine[:,:,i]=combine[:,:,i]
-
-  #  return wt,combine ,wta, phasemat
-
