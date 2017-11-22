@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import scipy.interpolate
+from scipy import interpolate
 
 __all__=["fbm2d", "perlin2d", "powerlawmod"]
 
@@ -21,19 +21,19 @@ def fbm2d(exp ,nx ,ny):
 
 #--------------definitions--------------#
     exp = float(exp)
-    nx = float(nx)
-    ny = float(ny)
-    if ( nx % 2 ) != 0:
-        nx_half = (nx-1.)/2.
+    xn = float(nx)
+    yn = float(ny)
+    if ( xn % 2 ) != 0:
+        nx_half = (xn-1.)/2.
         odd_x = 1.
     else:
-        nx_half = nx/2.
+        nx_half = xn/2.
         odd_x = 0.
     if ( ny % 2 ) != 0:
-        ny_half = (ny-1.)/2.
+        ny_half = (yn-1.)/2.
         odd_y = 1.
     else:
-        ny_half = ny/2.
+        ny_half = yn/2.
         odd_y = 0.
  
 #---------------phase------------------#  
@@ -49,7 +49,7 @@ def fbm2d(exp ,nx ,ny):
                 tempo = np.random.uniform(-np.pi,np.pi)
                 phase[i,j] = tempo
                 if (i2 < nx and j2 < ny): 
-                    phase[i2,j2] = -1.*tempo
+                    phase[int(i2),int(j2)] = -1.*tempo
 
     phase = np.fft.ifftshift(phase)
     
@@ -63,14 +63,14 @@ def fbm2d(exp ,nx ,ny):
     for i in range(int(ny)):
         ymap[:,i]=(i-ny_half)/ny
     kmat= np.sqrt(xmap**2. + ymap ** 2.)
-    kmat[nx_half,ny_half]=1.
+    kmat[int(nx_half),int(ny_half)]=1.
 
 
 
-#------------------amplititude-------------------#
+#------------------amplitude-------------------#
 
     amplitude = kmat**(exp/2.)
-    amplitude[nx_half,ny_half]=0.
+    amplitude[int(nx_half),int(ny_half)]=0.
 
     amplitude = np.fft.ifftshift(amplitude)
     
@@ -99,7 +99,7 @@ def perlin2d(n,p):
     '''
     total = 0
     fmax=(2**(n))
-    imatrix = np.zeros((fmax,fmax,n-2))
+    imatrix = np.zeros((n-2,fmax,fmax))
     coord=np.arange(fmax)
     for i in range(2,n):
         f=(2**(i))
@@ -109,10 +109,10 @@ def perlin2d(n,p):
         x=np.linspace(0,fmax-1,f)
         y=np.linspace(0,fmax-1,f)
 
-        g=scipy.interpolate.RectBivariateSpline(y,x,randz)
+        g=interpolate.RectBivariateSpline(y,x,randz)
         intmat=g(coord,coord)*a
         total=(intmat)+total
-        imatrix[:,:,i-2]=intmat
+        imatrix[i-2,:,:]=intmat
     return total, imatrix
 
 
@@ -153,8 +153,7 @@ def powerlawmod(wt, wtC, tab_k,  wherestart, slope):
 
         wtfori=abs(Wc[:,:,i])
 
-        difference = slope * ( x[i] - x[wherestart] )
-             - powernew[i] + power[wherestart]
+        difference = slope * ( x[i] - x[wherestart] ) - powernew[i] + power[wherestart]
         constant= np.sqrt(np.exp(difference))
 
         wtmod[:,:,i]=wtfori*constant
@@ -203,8 +202,7 @@ def powerlawmod2(wt, wtC, tab_k,  wherestart, slope, S1ac, S1a,):
         ctest=0
         wtfori=abs(Wc[:,:,i])
 
-        difference = slope * ( x[i] - x[wherestart] ) - powernew[i] +
-                  power[wherestart]
+        difference = slope * ( x[i] - x[wherestart] ) - powernew[i] + power[wherestart]
 
         constant= ( (-2*np.mean(wtfori)) - np.sqrt(4*((np.mean(wtfori)**2.))-
                   4*np.mean(wtfori**2.)*(1-np.exp(difference))))/(2)

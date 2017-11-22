@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import scipy.signal
+from scipy import signal
 
 __all__ = ["atrou", "fan_transform", "fan_inverse", "halo_transform", "halo_inverse"]
 
@@ -304,7 +304,7 @@ def halo_inverse(wt, tab_k, multiscales=False):
 
     '''
     multiscales allows reconstruction when wavelets have features that
-    are not necisacrliy at their original scales
+    are not necessarily at their original scales
     '''
 
 #----------------definitions----------------#
@@ -319,8 +319,8 @@ def halo_inverse(wt, tab_k, multiscales=False):
 
 #--------------Coords---------------------------##
 
-    x = np.arange( nb , dtype=float )
-    y = np.arange( na , dtype=float )
+    x = np.arange( na , dtype=float )
+    y = np.arange( nb , dtype=float )
     x , y = np.meshgrid( x, y )
     if (nb % 2) == 0:
         x = ( 1.*x - (nb)/2. )/ nb 
@@ -342,7 +342,7 @@ def halo_inverse(wt, tab_k, multiscales=False):
         
     for h in range(tab_k.shape[0]):
         uv = 0
-        if scale=True:
+        if multiscales==True:
             for i in range(tab_k.shape[0]):
                 uv = np.exp ( -0.5 * ( abs ( a[i] * np.sqrt ( x**2. + y**2. ) )- ko)**2.)
                 uv = uv / a[i]
